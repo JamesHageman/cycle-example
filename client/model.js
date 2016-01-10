@@ -3,12 +3,13 @@ import { Observable } from 'rx'
 
 const invert = x => !x
 
-function model({
+export default function model({
   receiveTodos$,
   newTodo$,
   todoDelete$,
   todoToggle$,
   showCompleted$,
+  updateTodoFromServer$,
 }) {
   const initial = Immutable.fromJS({
     todos: [],
@@ -40,6 +41,17 @@ function model({
         }))
   })
 
+  const serverUpdateMod$ = updateTodoFromServer$.map(todo => function(state) {
+    return state.set(`todos`,
+      state.get(`todos`).map(t => {
+        if (t.get(`id`) === todo.id) {
+          return t.merge(todo)
+        }
+        return t
+      })
+    )
+  })
+
   const showCompletedMod$ = showCompleted$.map(show => function(state) {
     return state.set(`showCompleted`, !!show)
   })
@@ -49,7 +61,8 @@ function model({
     addTodoMod$,
     removeTodoMod$,
     toggleTodoMod$,
-    showCompletedMod$
+    showCompletedMod$,
+    serverUpdateMod$
   )
 
   return Observable.just(initial)
@@ -57,5 +70,3 @@ function model({
     .scan((state, modFn) => modFn(state))
     .shareReplay(1)
 }
-
-export default model

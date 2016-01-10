@@ -11,6 +11,7 @@ import view from './view'
 const GET_TODOS_URL = `/todos`
 const ADD_TODO_URL = `/todo/new`
 const DELETE_TODO_URL = `/todo/delete`
+const UPDATE_TODO_URL = `/todo/update`
 
 function replicate(stream, subject) {
   if (!(subject && subject.onNext)) {
@@ -28,6 +29,11 @@ function main(sources) {
     newTodo$: sources.HTTP
       .filter(res => res.request.url === ADD_TODO_URL)
       .mergeAll(),
+
+    updateTodoFromServer$: sources.HTTP
+      .filter(res => res.request.url === UPDATE_TODO_URL)
+      .mergeAll()
+      .map(res => res.body),
 
     showCompleted$: sources.DOM.select(`.js-show-completed`).events(`change`)
       .map(ev => ev.target.checked),
@@ -74,14 +80,13 @@ function main(sources) {
     } = todo.toJS()
 
     return {
-      url: `/todo/update`,
-      method: `put`,
+      url: UPDATE_TODO_URL,
+      method: `post`,
       send: {
         id,
         text,
         completed,
       },
-      eager: true,
     }
   })
 
