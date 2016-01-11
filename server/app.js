@@ -26,7 +26,7 @@ app.post(`/todo/new`, (req, res, next) => {
   }).then(todo => res.json(todo)).catch(next)
 })
 
-app.post(`/todo/update`, (req, res, next) => {
+app.put(`/todo/update`, (req, res, next) => {
   const {
     text,
     completed,
@@ -46,7 +46,7 @@ app.delete(`/todo/delete`, (req, res, next) => {
 })
 
 // Error handler
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   console.error(err.stack)
   res.status(500).json({
     status: 1,
