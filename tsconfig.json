@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es6",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "out": "./public/bundle_ts.js",
+    "sourceMap": true
+  },
+  "files": [
+    "ts_client/main.ts"
+  ]
+}
